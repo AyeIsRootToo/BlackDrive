@@ -1,0 +1,10 @@
+﻿  stdafx.cpp
+  CMPS 285.cpp
+c:\users\jake green\documents\visual studio 2015\projects\cmps 285\cmps 285\cmps 285\cmps 285.cpp(99): warning C4018: '<': signed/unsigned mismatch
+c:\users\jake green\documents\visual studio 2015\projects\cmps 285\cmps 285\cmps 285\cmps 285.cpp(129): warning C4242: 'argument': conversion from 'unsigned int' to 'char', possible loss of data
+  cryptlib.lib(cryptlib.obj) : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
+LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
+CMPS 285.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
+  Generating code
+  Finished generating code
+  CMPS 285.vcxproj -> C:\Users\Jake Green\Documents\Visual Studio 2015\Projects\CMPS 285\CMPS 285\Debug\CMPS 285.exe
