@@ -1,152 +1,63 @@
-#include "stdafx.h"
+/*
 
-#include <conio.h>
+Here is the main .cpp file that is compiled and used as a testing bed to make sure all of the functions defined in the other cpp files
+are working properly before we define how they are used in our C# GUI code.
 
-#include <stdio.h>
-
-#pragma warning(disable:4996)
+I am going to comment what everything does so that everything will understand what is going on.
+-AyeIsRootToo
+*/
 
 // g++ -g3 -ggdb -O0 -DDEBUG -I/usr/include/cryptopp Driver.cpp -o Driver.exe -lcryptopp -lpthread
 // g++ -g -O2 -DNDEBUG -I/usr/include/cryptopp Driver.cpp -o Driver.exe -lcryptopp -lpthread
 
 //This was copied as an example from http://programmingknowledgeblog.blogspot.de/2013/04/compiling-and-integrating-crypto-into.html
-#include <cstdio>
-#include <iostream>
-#include "..\cryptopp-master\osrng.h"
-using CryptoPP::AutoSeededRandomPool;
+#include "stdafx.h"
+//precompiled header for this project; may want to get rid of it later for use in our C# code
 
-#include <iostream>
-using std::cout;
-using std::cerr;
-using std::endl;
+#include <conio.h>
+//used for the _getch() function
+
+#include "encryptFile.h"
+//This is our custom header file that defines encrypt_c
+
+#include "decryptFile.h"
+//same as above only for decrypt_c
 
 #include <string>
+//used to hold the data needed for pretty much this entire project lol
+
 using std::string;
+//this way we do not have to type "using namespace std;" or "std::string"
+//"using namespace std;" copies the entire std namespace, which chews up data unnecessarily
 
-#include <cstdlib>
-using std::exit;
-
-#include "..\cryptopp-master\cryptlib.h"
-using CryptoPP::Exception;
-
-#include "..\cryptopp-master\hex.h"
-using CryptoPP::HexEncoder;
-using CryptoPP::HexDecoder;
-
-#include "..\cryptopp-master\filters.h"
-using CryptoPP::StringSink;
-using CryptoPP::StringSource;
-using CryptoPP::StreamTransformationFilter;
-
-#include "..\cryptopp-master\des.h"
-using CryptoPP::DES_EDE2;
-
-#include "..\cryptopp-master\modes.h"
-using CryptoPP::CBC_Mode;
-
-#include "..\cryptopp-master\secblock.h"
-using CryptoPP::SecByteBlock;
 #include <iostream>
-#include <string>
-#include "..\cryptopp-master\modes.h"
-#include "..\cryptopp-master\aes.h"
-#include "..\cryptopp-master\filters.h"
-/*
-CryptoPP::SecByteBlock HexDecodeString(const char *hex)
-{
-CryptoPP::StringSource ss(hex, true, new CryptoPP::HexDecoder);
-CryptoPP::SecByteBlock result((size_t)ss.MaxRetrievable());
-ss.Get(result, result.size());
-return result;
-}*/
+//used for the cout function
+using std::cout;
+//same as the story with string
 
+int main(int argc, char* argv[])
+{//this is only here as a testing bed to make sure our functions work properly so they will be compiled to a .dll for use in C# as mentioned above
+	/*
+	  AES encryption uses a secret key of a variable length (128-bit, 196-bit or 256-bit).
+	  This key is secretly exchanged between two parties before communication begins.
+	*/
+	//const char* key = "0123456789abcdef"; //this is the key, this algorithm will not work without it
+	string key = "0123456789abcdef";
+	const char *test = "0123456789abcdef";
+	const char *nIv = "aaaaaaaaaaaaaaaa";
+	const char *ts = "input.txt";
+	const char *to = "re_input.txt";
+	//const char* iv = "aaaaaaaaaaaaaaaa"; //this is called the "initialization vector" and is used for CBC to speed up the process.  When we actually finish this, we will make this random so our files
+	string iv = "aaaaaaaaaaaaaaaa";
+	//will be more secure.
+	//encryption::encrypt_c(nIv, test, "source.cpp", "encrypted.dat"); //calling the encrypt_c function using those arguments
+	//encrypt_c(iv, key, "input.txt", "encrypted.dat");
+	//decrypt_c(iv, key, "encrypted.dat", "decrypted.txt");
+	//testCopy(ts, to);
+	test_copy_hex(ts, to);
 
-int main(int argc, char* argv[]) {
-
-	//HMODULE DLL = LoadLibrary(_T("cryptopp.dll"));
-	//
-	// Key and IV setup
-	//AES encryption uses a secret key of a variable length (128-bit, 196-bit or 256-
-	//bit). This key is secretly exchanged between two parties before communication
-	//begins. DEFAULT_KEYLENGTH= 16 bytes
-	std::string key = "0123456789abcdef";
-	std::string iv = "aaaaaaaaaaaaaaaa";
-	string plain = "CBC Mode Test";
-	string cipher, encoded, recovered;
-
-	std::cout << "Enter your text to encrypt:\n";
-	std::string plaintext = "";
-	std::getline(std::cin, plaintext);
-	std::cout << "\n";
-	std::string ciphertext;
-	std::string decryptedtext;
-
-	std::cout << "Plain Text (" << plaintext.size() << " bytes)" << std::endl;
-	std::cout << plaintext;
-	std::cout << "\n\n";
-
-	CryptoPP::AES::Encryption aesEncryption((byte *)key.c_str(), CryptoPP::AES::MAX_KEYLENGTH);
-	CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, (byte *)iv.c_str());
-
-	CryptoPP::StreamTransformationFilter stfEncryptor(cbcEncryption, new CryptoPP::StringSink(ciphertext));
-	stfEncryptor.Put(reinterpret_cast<const unsigned char*>(plaintext.c_str()), plaintext.length() + 1);
-	stfEncryptor.MessageEnd();
-	cout << "cipher text plain: " << ciphertext << endl;
-	std::cout << "Cipher Text (" << ciphertext.size() << " bytes)" << std::endl;
-	cout << endl;
-	cout << endl;
-	std::cout << "cipher text In HEX FORM:: ";
-	for (int i = 0; i < ciphertext.size(); i++) {
-
-		std::cout << "0x" << std::hex << (0xFF & static_cast<byte>(ciphertext[i])) << " ";
-	}
-	cout << endl;
-	cout << endl;
-	/*********************************\
-	\*********************************/
-
-	// Pretty print
-	encoded.clear();
-	StringSource(ciphertext, true,
-		new HexEncoder(
-			new StringSink(encoded)
-		) // HexEncoder
-	); // StringSource
-	cout << "cipher text In HEX FORM (Modified):: " << encoded << endl;
-	cout << endl;
-	cout << endl;
-	char *name2;
-	name2 = (char*)malloc(encoded.length() + 1); // don't forget to free!!!!
-												 //s2 = Database_row_count; // I forget if the string class can implicitly be converted to char*
-												 //s2[0] = '1';
-	strcpy(name2, encoded.c_str());
-
-	const char* hex_str = name2;
-
-	std::string result_string;
-	unsigned int ch;
-	for (; std::sscanf(hex_str, "%2x", &ch) == 1; hex_str += 2)
-		result_string += ch;
-	cout << "HEX FORM to cipher text :: ";
-	std::cout << result_string << '\n';
-	cout << endl;
-	cout << endl;
-	/*********************************\
-	\*********************************/
-
-
-	CryptoPP::AES::Decryption aesDecryption((byte *)key.c_str(), CryptoPP::AES::MAX_KEYLENGTH);
-	CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, (byte *)iv.c_str());
-
-	CryptoPP::StreamTransformationFilter stfDecryptor(cbcDecryption, new CryptoPP::StringSink(decryptedtext));
-	stfDecryptor.Put(reinterpret_cast<const unsigned char*>(result_string.c_str()), result_string.size());
-	stfDecryptor.MessageEnd();
-	std::cout << "Decrypted Text: " << std::endl;
-	std::cout << decryptedtext;
-	std::cout << std::endl << std::endl;
-
-	std::cout << "Press any key to exit the program. . .";
-	_getch();
-
-	return 0;
+	//decryption::decrypt_c(nIv, test, "encrypted.dat", "dec.cpp"); //calling the decrypt_c function using those arguments
+	cout << "Press any key to exit the program. . ."; //a command telling the user to exit
+	//_getch(); //wait for user input
+	return 0; //return no errors/end program
 }
